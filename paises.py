@@ -1,7 +1,7 @@
 import json
 import sys
 
-import requests
+import requests 
 
 URL_ALL = 'https://restcountries.eu/rest/v2/all'
 URL_NAME ='https://restcountries.eu/rest/v2/name/'
@@ -20,7 +20,15 @@ def parsing(response_text):
         return json.loads(response_text)
     except:
         print('erro ao fazer parsing')
-        
+
+#   get request and parsing to the functions: show_population(), show_currency(), show_capital()    
+def get_countries(country_name):
+    response = request_url(URL_NAME + country_name)
+    if response:
+        return parsing(response)
+    else:
+        print('pais nao encontrado')
+
 def count_countries():
     response = request_url(URL_ALL)
     if response:
@@ -31,37 +39,28 @@ def count_countries():
 def list_countries(all_countries):
     for country in all_countries:
         print(country)
-
     
-def show_population(country_name):
-    response = request_url(URL_NAME + country_name)
-    if response:
-        countries_list = parsing(response)
-        for country in countries_list:
-            print('{}: {} de habitantes'.format(country['name'], country['population']))
-    else:
-        print('pais nao encontrado!')
 
+def show_population(country_name):
+    countries_list = get_countries(country_name)
+    for country in countries_list:
+        print('{}: {} de habitantes'.format(country['name'], country['population']))
+
+        
 def show_currency(country_name):
-    response = request_url(URL_NAME + country_name)
-    if response:
-        countries_list = parsing(response)
-        for country in countries_list:
-            print('Moedas do {}: '.format(country['name']))
-            currencies = country['currencies']
-            for currency in currencies:
-                print('{} - {}'.format(currency['name'], currency['code']))
-    else:
-        print('pais nao encontrado!')
+    countries_list = get_countries(country_name)
+    for country in countries_list:
+        print('Moedas do {}: '.format(country['name']))
+        currencies = country['currencies']
+        for currency in currencies:
+            print('{} - {}'.format(currency['name'], currency['code']))
+    
 
 def show_capital(country_name):
-    response = request_url(URL_NAME + country_name)
-    if response:
-        countries_list = parsing(response)
-        for country in countries_list:
-            print('capital do {}: {}' .format(country['name'], country['capital']))
-    else:
-        print('pais nao encontrado')
+    countries_list = get_countries(country_name)
+    for country in countries_list:
+        print('capital do {}: {}' .format(country['name'], country['capital']))
+    
 
 def read_country_name():
     try:
